@@ -1,0 +1,28 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+
+# Asset meta data should only be ignored when the corresponding asset is also ignored
+*.pidb.meta
+*.pidb
+*.unityproj
+*.sln
+*.userprefs
+*.csproj
+*.tmp
+*.svd
+*.suo
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Exclude files created by Unity Cloud Build
+*.cloud
+
+# End of .gitignore
