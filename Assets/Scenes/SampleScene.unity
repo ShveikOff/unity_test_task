@@ -539,6 +539,10 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585552}
+  - component: {fileID: 330585551}
+  - component: {fileID: 330585550}
+  - component: {fileID: 330585549}
   - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
@@ -674,11 +678,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77710bb1c11433d42be98730bb5d61f8, type: 3}
+  m_Script: {fileID: 11500000, guid: f045a4b93b810d040968aaf00cc51bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 8575092248966918533, guid: 0fb6b74a929cee347a39176465a61620, type: 3}
-  plane: {fileID: 807626554}
+  fileName: Notes
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dfe5c6d15201804486864a7309c80bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagePrefab: {fileID: 704001741562776452, guid: f9679d81d622a3547a58ddb35ea0ecf2, type: 3}
+  bonusPrefab: {fileID: 2072828922398434275, guid: f18c631754c068245b95bc16b8fa9d67, type: 3}
+  notePrefab: {fileID: 622916889496467316, guid: 83b05d913b95f7a488b46b3c42e40c78, type: 3}
+--- !u!114 &330585550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca5dae45f23ad3544b503f9b5cb79c13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   canvas: {fileID: 1939492284}
   MainText: {fileID: 336141666}
   StartContinueButton: {fileID: 975957798}
@@ -689,10 +719,37 @@ MonoBehaviour:
   NoteTextPlane: {fileID: 1460425410}
   NoteText: {fileID: 1210109133}
   CloseNoteButton: {fileID: 424538912}
-  hpText: {fileID: 468013249}
-  damagePrefab: {fileID: 704001741562776452, guid: f9679d81d622a3547a58ddb35ea0ecf2, type: 3}
-  bonusPrefab: {fileID: 2072828922398434275, guid: f18c631754c068245b95bc16b8fa9d67, type: 3}
-  notePrefab: {fileID: 622916889496467316, guid: 83b05d913b95f7a488b46b3c42e40c78, type: 3}
+  healthText: {fileID: 468013249}
+--- !u!114 &330585551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f47029c581632c14dbf5d535be938d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 8575092248966918533, guid: 0fb6b74a929cee347a39176465a61620, type: 3}
+  plane: {fileID: 807626554}
+--- !u!114 &330585552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3fa9b4928b7f404da826d90953f3de0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth: 10
+  playerSpeed: 10
+  gameEnabled: 0
+  gamePaused: 0
 --- !u!1 &336141664
 GameObject:
   m_ObjectHideFlags: 0
@@ -1355,7 +1412,6 @@ GameObject:
   - component: {fileID: 807626557}
   - component: {fileID: 807626556}
   - component: {fileID: 807626555}
-  - component: {fileID: 807626559}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -1453,21 +1509,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1599084572}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &807626559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 807626554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dfe5c6d15201804486864a7309c80bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damagePrefab: {fileID: 704001741562776452, guid: f9679d81d622a3547a58ddb35ea0ecf2, type: 3}
-  bonusPrefab: {fileID: 2072828922398434275, guid: f18c631754c068245b95bc16b8fa9d67, type: 3}
-  notePrefab: {fileID: 622916889496467316, guid: 83b05d913b95f7a488b46b3c42e40c78, type: 3}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

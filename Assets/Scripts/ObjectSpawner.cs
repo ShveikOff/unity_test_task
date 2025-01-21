@@ -1,22 +1,26 @@
 using System.IO.Compression;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
-public class CreateObjects : MonoBehaviour
+public class ObjectSpawner : MonoBehaviour
 {
-
+    public static ObjectSpawner Instance;
     public GameObject damagePrefab;
     public GameObject bonusPrefab;
     public GameObject notePrefab;
 
-    private static Dictionary<string, int> coordDict = new Dictionary<string, int>();
+    private Dictionary<string, int> coordDict = new Dictionary<string, int>();
 
-    void Start()
-    {
-        StartSpawn (damagePrefab, bonusPrefab, notePrefab);
+    private void Awake() {
+        if (Instance == null) {
+            Instance = this;
+        } else {
+            Destroy(gameObject);
+        }
     }
 
-    public static void StartSpawn (GameObject damagePrefab, GameObject bonusPrefab, GameObject notePrefab) {
+    public void StartSpawn () {
 
         coordDict.Add("0,0", 0);
         coordDict.Add("1,0", 0);
@@ -36,7 +40,7 @@ public class CreateObjects : MonoBehaviour
 
     }
 
-    public static void ClearAll () {
+    public void ClearAll () {
         GameObject[] allObjects = FindObjectsOfType<GameObject>();
 
         // Проверяем имя каждого объекта
@@ -44,16 +48,16 @@ public class CreateObjects : MonoBehaviour
         {
             if (obj.name == "Damage(Clone)" || 
                 obj.name == "Bonus(Clone)" || 
-                obj.name == "Note(Clone)")
-            {
-                Destroy(obj); // Удаляем объект
+                obj.name == "Note(Clone)"){ 
+            if (obj.name != "Plane") {
+                Destroy(obj);
             }
         }
+            coordDict.Clear();
+        }
+    }  
 
-        coordDict.Clear();
-
-    }
-    public static bool SpawnObject (GameObject objPrefab) {
+    public bool SpawnObject (GameObject objPrefab) {
         int xCoord = RandomNumber();
         int zCoord = RandomNumber();
         if (coordDict.ContainsKey($"{xCoord},{zCoord}")) {
@@ -64,12 +68,23 @@ public class CreateObjects : MonoBehaviour
         return true;
     }
 
-    public static void ClearCoord (string coord) {
+    public void SpawnDamage () {
+        SpawnObject(damagePrefab);
+    }
+
+    public void SpawnBonus () {
+        SpawnObject (bonusPrefab);
+    }
+
+    public void SpawnNote () {
+        SpawnObject(notePrefab);
+    }
+
+    public void ClearCoord (string coord) {
         coordDict.Remove(coord);
     }
     
-
-    private static int RandomNumber() {
+    private int RandomNumber() {
         return Random.Range(-9, 14);
     }
 }

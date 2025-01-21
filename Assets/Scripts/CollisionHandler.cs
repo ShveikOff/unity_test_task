@@ -1,12 +1,9 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.UI;
 public class CollisionHandler : MonoBehaviour
 {
-    public GameObject damagePrefab;
-    public GameObject bonusPrefab;
-    public GameObject notePrefab;
-
     void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.name == "Damage(Clone)")
@@ -15,11 +12,11 @@ public class CollisionHandler : MonoBehaviour
             int zCoord = Mathf.RoundToInt(other.transform.position.z);
             string coord = $"{xCoord},{zCoord}";
 
-            MainScript.playerHealth -= 1;
+            GameManager.Instance.ModifyHealth(-1);
             Destroy(other.gameObject);
 
-            CreateObjects.SpawnObject(damagePrefab);
-            CreateObjects.ClearCoord(coord);
+            ObjectSpawner.Instance.SpawnDamage();
+            ObjectSpawner.Instance.ClearCoord(coord);
         }
             if (other.gameObject.name == "Bonus(Clone)")
         {
@@ -28,12 +25,10 @@ public class CollisionHandler : MonoBehaviour
             string coord = $"{xCoord},{zCoord}";
 
             Destroy(other.gameObject);
-            MainScript.moveSpeed *= 1.2f;
+            GameManager.Instance.ModifySpeed(1.5f, 5f);
 
-            StartCoroutine(ResetMoveSpeed(5f));
-
-            CreateObjects.SpawnObject(bonusPrefab);
-            CreateObjects.ClearCoord(coord);
+            ObjectSpawner.Instance.SpawnBonus();
+            ObjectSpawner.Instance.ClearCoord(coord);
         }
             if (other.gameObject.name == "Note(Clone)")
         {
@@ -43,19 +38,18 @@ public class CollisionHandler : MonoBehaviour
 
             Destroy(other.gameObject);
             
-            CreateObjects.SpawnObject(notePrefab);
-            CreateObjects.ClearCoord(coord);
+            ObjectSpawner.Instance.SpawnNote();
+            ObjectSpawner.Instance.ClearCoord(coord);
 
-            GameObject cameraObject = Camera.main.gameObject;
-            MainScript mainScript = cameraObject.GetComponent<MainScript>();
-            mainScript.ShowAppendNote();       
+            string[] notesExampleList = {
+                "Урон - изменяет здоровье персонажа",
+                "Бонус - временно ускоряет передвижение игрока (на 3-5 секунд).",
+                "Записка - текстовая записка которая открывается на половину экрана при получении" };
+
+            GameManager.Instance.PauseGame();
+            string text = notesExampleList[Random.Range(0, 2)];
+            UIManager.Instance.ShowNote(text);
+            FileManager.Instance.AppendTextToFile(text);
         }
     }
-
-    private IEnumerator ResetMoveSpeed(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        MainScript.moveSpeed = 10f;
-    }
-
 }
