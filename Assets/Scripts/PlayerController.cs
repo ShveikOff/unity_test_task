@@ -1,12 +1,15 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /*
 This class is responsible for managing the player object and its movement
 */
 public class PlayerController : MonoBehaviour {
+
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private CollisionHandler collisionHandler;
     
-    public GameObject playerPrefab;
     private Rigidbody playerRb;
     private float moveSpeed;
 
@@ -16,47 +19,50 @@ public class PlayerController : MonoBehaviour {
     [NonSerialized] public float planeTop;
     [NonSerialized] public float planeBottom;
 
+    private UnityEngine.Vector3 startPosition = new UnityEngine.Vector3(0, 0.5f, 0);
+
     public void Start() {
-        Vector3 planeSize = plane.transform.localScale * 10;
-        Vector3 planeCenter = plane.transform.position;
+        UnityEngine.Vector3 planeSize = plane.transform.localScale * 10;
+        UnityEngine.Vector3 planeCenter = plane.transform.position;
         planeLeft = planeCenter.x - (planeSize.x / 2);
         planeRight = planeCenter.x + (planeSize.x / 2);
         planeTop = planeCenter.z + (planeSize.z / 2);
         planeBottom = planeCenter.z - (planeSize.z / 2);
 
-        GameObject player = Instantiate(playerPrefab, new Vector3(0, 0.5f, 0), Quaternion.identity) as GameObject;
-        playerRb = player.GetComponent<Rigidbody>();
+        playerRb = GetComponent<Rigidbody>();
 
-        moveSpeed = GameManager.Instance.playerSpeed;       
+        moveSpeed = gameManager.playerSpeed;
+
     }
 
 
     private void Update() {
-        if (playerRb.position.x < planeLeft) {
-            playerRb.position = new Vector3(planeRight, playerRb.position.y, playerRb.position.z);
-        }
+        float wrappedX = Mathf.Repeat(playerRb.position.x - planeLeft, planeRight - planeLeft) + planeLeft;
+        float wrappedZ = Mathf.Repeat(playerRb.position.z - planeBottom, planeTop - planeBottom) + planeBottom;
 
-        if (playerRb.position.x > planeRight) {
-            playerRb.position = new Vector3(planeLeft, playerRb.position.y, playerRb.position.z);
-        }
-
-        if (playerRb.position.z < planeBottom) {
-            playerRb.position = new Vector3(playerRb.position.x, playerRb.position.y, planeTop);
-        }
-
-        if (playerRb.position.z > planeTop) {
-            playerRb.position = new Vector3(playerRb.position.x, playerRb.position.y, planeBottom);
-        }
+        playerRb.position = new UnityEngine.Vector3(wrappedX, playerRb.position.y, wrappedZ);
     }
 
+
+
     private void FixedUpdate() {
-        if (GameManager.Instance.gameEnabled) {
+        if (gameManager.gameEnabled) {
             float moveX = Input.GetAxis("Horizontal");
             float moveZ = Input.GetAxis("Vertical");
 
-            Vector3 movement = new Vector3(moveX, 0, moveZ) * moveSpeed * Time.fixedDeltaTime;
+            UnityEngine.Vector3 movement = new UnityEngine.Vector3(moveX, 0, moveZ) * moveSpeed * Time.fixedDeltaTime;
 
             playerRb.MovePosition(playerRb.position + movement);
+        }
+    }
+
+    public void ResetPosition() {
+        if (playerRb != null) {
+            playerRb.linearVelocity = UnityEngine.Vector3.zero;
+            playerRb.angularVelocity = UnityEngine.Vector3.zero;
+            playerRb.position = startPosition;
+        } else {
+            transform.position = startPosition;
         }
     }
 }

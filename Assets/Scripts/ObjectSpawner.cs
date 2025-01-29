@@ -5,23 +5,14 @@ using UnityEngine.Rendering;
 
 public class ObjectSpawner : MonoBehaviour
 {
-    public static ObjectSpawner Instance;
     public GameObject damagePrefab;
     public GameObject bonusPrefab;
     public GameObject notePrefab;
 
     private Dictionary<string, int> coordDict = new Dictionary<string, int>();
-
-    private void Awake() {
-        if (Instance == null) {
-            Instance = this;
-        } else {
-            Destroy(gameObject);
-        }
-    }
+    private List<GameObject> spawnedObjects = new List<GameObject>();
 
     public void StartSpawn () {
-
         coordDict.Add("0,0", 0);
         coordDict.Add("1,0", 0);
         coordDict.Add("0,1", 0);
@@ -41,31 +32,33 @@ public class ObjectSpawner : MonoBehaviour
     }
 
     public void ClearAll () {
-        GameObject[] allObjects = FindObjectsOfType<GameObject>();
-
-        // Проверяем имя каждого объекта
-        foreach (GameObject obj in allObjects)
-        {
-            if (obj.name == "Damage(Clone)" || 
-                obj.name == "Bonus(Clone)" || 
-                obj.name == "Note(Clone)"){ 
-            if (obj.name != "Plane") {
+        foreach (GameObject obj in spawnedObjects) {
+            if (obj != null) {
                 Destroy(obj);
             }
         }
-            coordDict.Clear();
-        }
+        coordDict.Clear();
+        spawnedObjects.Clear();
     }  
 
     public bool SpawnObject (GameObject objPrefab) {
         int xCoord = RandomNumber();
         int zCoord = RandomNumber();
-        if (coordDict.ContainsKey($"{xCoord},{zCoord}")) {
+        string coordKey = $"{xCoord},{zCoord}";
+        if (coordDict.ContainsKey(coordKey)) {
             return false;
         } 
-        Instantiate(objPrefab, new Vector3(xCoord, 0.5f, zCoord), Quaternion.identity);
-        coordDict.Add($"{xCoord},{zCoord}", 0);
+        GameObject newObject = Instantiate(objPrefab, new Vector3(xCoord, 0.5f, zCoord), Quaternion.identity);
+        spawnedObjects.Add(newObject);
+        coordDict.Add(coordKey, 0);
         return true;
+    }
+
+    public void DestroySpawnedObject(GameObject obj) {
+        if (spawnedObjects.Contains(obj)) {
+            spawnedObjects.Remove(obj);
+        }
+        Destroy(obj);
     }
 
     public void SpawnDamage () {

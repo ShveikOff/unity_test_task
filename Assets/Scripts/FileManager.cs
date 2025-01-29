@@ -2,21 +2,8 @@ using System.IO;
 using UnityEngine;
 
 public class FileManager : MonoBehaviour {
-    public static FileManager Instance;
     public string fileName = "Notes";
     private string FilePath => Path.Combine(Application.persistentDataPath, fileName);
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
 public void SaveTextToFile(string text)
     {

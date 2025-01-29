@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
-    public static UIManager Instance;
+    
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private FileManager fileManager;
 
     public Canvas canvas;
     public TextMeshProUGUI MainText;
@@ -18,18 +20,9 @@ public class UIManager : MonoBehaviour {
     public Button CloseNoteButton;
     public TextMeshProUGUI healthText;
 
-    private void Awake()
-    {
-        if (Instance == null){
-            Instance = this;
-        } else {
-            Destroy(gameObject);
-        }
-    }
-
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            if (GameManager.Instance.gamePaused) {
+            if (gameManager.gameEnabled) {
                 PauseGame();
             } else {
                 StopGame();
@@ -45,7 +38,7 @@ public class UIManager : MonoBehaviour {
         NotesListButton.gameObject.SetActive(true);
 
         TextMeshProUGUI  StartContinueButtonText = StartContinueButton.GetComponentInChildren<TextMeshProUGUI>();
-        if (GameManager.Instance.gamePaused) {
+        if (gameManager.gamePaused) {
             StartContinueButtonText.text = "Continue";
         } else {
             StartContinueButtonText.text = "Start";
@@ -87,7 +80,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void ShowNote(string text) {
-        GameManager.Instance.PauseGame();
+        gameManager.PauseGame();
         NoteTextPlane.gameObject.SetActive(true);
         NoteText.gameObject.SetActive(true);
         CloseNoteButton.gameObject.SetActive(true);
@@ -98,7 +91,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void HideNote() {
-        GameManager.Instance.UnPauseGame();
+        gameManager.UnPauseGame();
         NoteTextPlane.gameObject.SetActive(false);
         NoteText.gameObject.SetActive(false);
         CloseNoteButton.gameObject.SetActive(false);
@@ -128,27 +121,32 @@ public class UIManager : MonoBehaviour {
     public void StartButtonOnClick() {
         HideMainMenu();
         ShowHealthBar();
-        UpdateHealthUI(GameManager.Instance.playerHealth);
-        if (GameManager.Instance.gamePaused) {
-            GameManager.Instance.UnPauseGame();
+        UpdateHealthUI(gameManager.playerHealth);
+        if (gameManager.gamePaused) {
+            gameManager.UnPauseGame();
         } else {
-            GameManager.Instance.StartGame();
+            gameManager.StartGame();
         }
     }
 
     public void PauseGame() {
-        GameManager.Instance.PauseGame();
+        gameManager.PauseGame();
         ShowMainMenu();
     }
 
+    public void UnPauseGame() {
+        gameManager.UnPauseGame();
+        HideMainMenu();
+    }
+
     public void StopGame() {
-        GameManager.Instance.StopGame();
+        gameManager.StopGame();
         HideHealthBar();
         ShowMainMenu();
     }
 
     public void ExitButtonOnClick() {
-        GameManager.Instance.ExitGame();
+        gameManager.ExitGame();
     }
 
     public void CloseNoteButtonOnClick () {
@@ -159,7 +157,7 @@ public class UIManager : MonoBehaviour {
         bool isNotesListVisible = NotesListPlane.gameObject.activeSelf;
 
         if (!isNotesListVisible) {
-            ShowNotesList(FileManager.Instance.ReadTextFromFile());
+            ShowNotesList(fileManager.ReadTextFromFile());
         } else {
             HideNotesList();
         }

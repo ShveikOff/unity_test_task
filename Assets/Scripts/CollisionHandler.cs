@@ -4,19 +4,25 @@ using TMPro;
 using UnityEngine.UI;
 public class CollisionHandler : MonoBehaviour
 {
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private ObjectSpawner objectSpawner;
+    [SerializeField] private UIManager uIManager;
+    [SerializeField] private FileManager fileManager;
+
     void OnCollisionEnter(Collision other)
-    {
+    {   
+
         if (other.gameObject.name == "Damage(Clone)")
         {
             int xCoord = Mathf.RoundToInt(other.transform.position.x);
             int zCoord = Mathf.RoundToInt(other.transform.position.z);
             string coord = $"{xCoord},{zCoord}";
 
-            GameManager.Instance.ModifyHealth(-1);
-            Destroy(other.gameObject);
+            gameManager.ModifyHealth(-1);
+            objectSpawner.DestroySpawnedObject(other.gameObject);
 
-            ObjectSpawner.Instance.SpawnDamage();
-            ObjectSpawner.Instance.ClearCoord(coord);
+            objectSpawner.SpawnDamage();
+            objectSpawner.ClearCoord(coord);
         }
             if (other.gameObject.name == "Bonus(Clone)")
         {
@@ -24,11 +30,11 @@ public class CollisionHandler : MonoBehaviour
             int zCoord = Mathf.RoundToInt(other.transform.position.z);
             string coord = $"{xCoord},{zCoord}";
 
-            Destroy(other.gameObject);
-            GameManager.Instance.ModifySpeed(1.5f, 5f);
+            objectSpawner.DestroySpawnedObject(other.gameObject);
+            gameManager.ModifySpeed(1.5f, 5f);
 
-            ObjectSpawner.Instance.SpawnBonus();
-            ObjectSpawner.Instance.ClearCoord(coord);
+            objectSpawner.SpawnBonus();
+            objectSpawner.ClearCoord(coord);
         }
             if (other.gameObject.name == "Note(Clone)")
         {
@@ -36,20 +42,20 @@ public class CollisionHandler : MonoBehaviour
             int zCoord = Mathf.RoundToInt(other.transform.position.z);
             string coord = $"{xCoord},{zCoord}";
 
-            Destroy(other.gameObject);
+            objectSpawner.DestroySpawnedObject(other.gameObject);
             
-            ObjectSpawner.Instance.SpawnNote();
-            ObjectSpawner.Instance.ClearCoord(coord);
+            objectSpawner.SpawnNote();
+            objectSpawner.ClearCoord(coord);
 
             string[] notesExampleList = {
                 "Урон - изменяет здоровье персонажа",
                 "Бонус - временно ускоряет передвижение игрока (на 3-5 секунд).",
                 "Записка - текстовая записка которая открывается на половину экрана при получении" };
 
-            GameManager.Instance.PauseGame();
+            gameManager.PauseGame();
             string text = notesExampleList[Random.Range(0, 2)];
-            UIManager.Instance.ShowNote(text);
-            FileManager.Instance.AppendTextToFile(text);
+            uIManager.ShowNote(text);
+            fileManager.AppendTextToFile(text);
         }
     }
 }

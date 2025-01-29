@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /*
@@ -6,42 +7,40 @@ this class is responsible for managing the game state
 */
 public class GameManager : MonoBehaviour {
     
-    public static GameManager Instance;
+    [SerializeField] private UIManager uIManager;
+    [SerializeField] private ObjectSpawner objectSpawner;
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private FileManager fileManager;
+
+    [SerializeField] private GameObject player;
 
     public int playerHealth = 10;
     public float playerSpeed = 10f;
     public bool gameEnabled = false;
     public bool gamePaused = false;
 
-    private void Awake() {
-        Debug.Log("Module started");
-        if (Instance == null) {
-            Instance = this;
-        } else {
-            Destroy(gameObject);
-        }
-    }
-
     private void Start() {
-        UIManager.Instance.ShowMainMenu();
-        ObjectSpawner.Instance.StartSpawn();
+        uIManager.ShowMainMenu();
+        objectSpawner.StartSpawn();
     }
 
-    public delegate void GameStateChanged();
-    public static event GameStateChanged OnGameStarted;
-    public static event GameStateChanged OnGamePaused;
-    public static event GameStateChanged OnGameStopped;
-    public static event GameStateChanged OnGameUnPaused;
+    public event Action OnGameStarted;
+    public event Action OnGamePaused;
+    public event Action OnGameStopped;
+    public event Action OnGameUnPaused;
 
     public void StartGame() {
         Debug.Log("Game started");
+        player.SetActive(true);
+        playerController.ResetPosition();
         playerHealth = 10;
-        ObjectSpawner.Instance.ClearAll();
-        ObjectSpawner.Instance.StartSpawn();
+        objectSpawner.ClearAll();
+        objectSpawner.StartSpawn();
         gameEnabled = true;
         gamePaused = false;
 
         OnGameStarted?.Invoke();
+        uIManager.UpdateHealthUI(playerHealth);
     }
 
     public void UnPauseGame() {
@@ -64,6 +63,7 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Game Stoped");
         gameEnabled = false;
         gamePaused = false;
+        player.SetActive(false);
 
         OnGameStopped?.Invoke();
     }
@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour {
     public void ModifyHealth(int amount)
     {
         playerHealth += amount;
-        UIManager.Instance.UpdateHealthUI(playerHealth);
+        uIManager.UpdateHealthUI(playerHealth);
         if (playerHealth <= 0)
         {
             StopGame();
